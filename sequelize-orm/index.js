@@ -36,8 +36,4 @@ User.findAll().then((users) =>
 
 app.get("/", (req, res) => res.send("Notes App"));
 
-app.get("/notes", function (req, res) {
-  Note.findAll().then((notes) => res.json(notes));
-});
-
 app.listen(port, () => console.log(`notes-app listening on port ${port}!`));
