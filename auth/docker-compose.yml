@@ -1,0 +1,43 @@
+version: '3'
+services:
+  postgres:
+    container_name: postgres-db
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASS}
+      - POSTGRES_DB=${DB_NAME_DEVELOPMENT}
+    ports:
+      - 5431:5432
+    tty: true
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+  nestjs:
+    container_name: nest-app
+    build:
+      context: .
+    command: npm run start:dev
+    environment:
+      - DB_TYPE=${DB_DIALECT}
+      - POSTGRES_HOST=${DB_HOST}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASS=${DB_PASS}
+      - POSTGRES_DB=${DB_NAME_DEVELOPMENT}
+      - POSTGRES_SYNC=false
+      - JWT_SECRET=${JWTKEY}
+      - POSTGRES_PORT=${DB_PORT}
+      - APP_EXPIRES=${APP_EXPIRES}
+      - APP_PORT=${APP_PORT}
+    ports:
+      - 3000:3000
+    depends_on:
+      - postgres
+    restart: always
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/node_modules/bcryptjs/
+
+volumes:
+  pgdata:
